@@ -45,7 +45,7 @@ public class TrackEntry : MonoBehaviour
         List<Mesh> possibleMeshes = new List<Mesh>(meshes);
         for (int i = 0; i < 3; i++)
         {
-            GameObject prefab = Instantiate(sourceObject, new Vector3(transform.position.x + (-1 + i), transform.position.y, transform.position.z + 3), Quaternion.identity);
+            GameObject prefab = Instantiate(sourceObject, new Vector3(transform.position.x - 3, transform.position.y, transform.position.z + (-1 + i)), Quaternion.identity);
             prefab.name = "" + i;
 
             Color selected = ExtractRandomElement(possibleColors);
@@ -58,7 +58,12 @@ public class TrackEntry : MonoBehaviour
             mat.SetFloat("_MKGlowPower", 0.5f);
             mat.SetTexture("_MKGlowTex", sprite);
 
+//            Destroy(cube.GetComponent<BoxCollider>());
+
+//            cube.AddComponent<MeshCollider>();
+
             Mesh newMesh = ExtractRandomElement(meshes);
+            newMesh.RecalculateBounds();
             cube.GetComponent<MeshFilter>().sharedMesh = newMesh;
 
             correct.Add(prefab);
@@ -121,38 +126,19 @@ public class TrackEntry : MonoBehaviour
     {
         Mesh mesh = new Mesh();
 
-        Vector3 p0 = new Vector3(0, 0, 0);
-        Vector3 p1 = new Vector3(1, 0, 0);
-        Vector3 p2 = new Vector3(0.5f, 0, Mathf.Sqrt(0.75f));
-        Vector3 p3 = new Vector3(0.5f, Mathf.Sqrt(0.75f), Mathf.Sqrt(0.75f) / 3);
-
         mesh.vertices = new Vector3[]{
-                p0,p1,p2,
-                p0,p2,p3,
-                p2,p1,p3,
-                p0,p3,p1
+                new Vector3(-0.5f, -0.5f, 0.5f), new Vector3(0.5f, -0.5f, 0.5f),
+                new Vector3(0, -0.5f, -0.5f), new Vector3(0, 0.5f, 0),
         };
+
         mesh.triangles = new int[]{
-                0,1,2,
-                3,4,5,
-                6,7,8,
-                9,10,11
-        };
+            1, 2, 3,
+            0, 1, 3,
+            0, 2, 3,
+        }; //triangles are facing in the same direction
 
-        Vector2 uv0 = new Vector2(0, 0);
-        Vector2 uv1 = new Vector2(1, 0);
-        Vector2 uv2 = new Vector2(0.5f, 1);
-
-        mesh.uv = new Vector2[]{
-                uv0,uv1,uv2,
-                uv0,uv1,uv2,
-                uv0,uv1,uv2,
-                uv0,uv1,uv2
-        };
-        
-		mesh.RecalculateNormals();
+        mesh.RecalculateNormals();
 		mesh.RecalculateBounds();
-		mesh.Optimize();
         return mesh;
     }
 
