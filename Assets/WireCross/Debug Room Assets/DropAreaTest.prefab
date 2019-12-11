@@ -420,6 +420,7 @@ GameObject:
   - component: {fileID: 6475508887741082696}
   - component: {fileID: 778441381188838163}
   - component: {fileID: 7790131585702683918}
+  - component: {fileID: 254665156286506259}
   m_Layer: 0
   m_Name: Trigger
   m_TagString: Untagged
@@ -436,7 +437,7 @@ Transform:
   m_GameObject: {fileID: 8120027907397798407}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 1, z: 3}
+  m_LocalScale: {x: 2.95, y: 0.75, z: 2.95}
   m_Children: []
   m_Father: {fileID: 872039407292568348}
   m_RootOrder: 5
@@ -501,6 +502,22 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &254665156286506259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120027907397798407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80c435c0587411b4e91bf31d6cdfe945, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 2800000, guid: c173b3ec5b7c8904fa1811df75863262, type: 3}
+  sourceObject: {fileID: 6281433845776887915, guid: e4f2aae5732115348b0fcdfbd309bfc3,
+    type: 3}
+  ejectVelocity: {x: 0, y: 2, z: 0}
 --- !u!1 &9033875187646679354
 GameObject:
   m_ObjectHideFlags: 0
