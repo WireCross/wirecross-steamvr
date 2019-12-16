@@ -22,7 +22,6 @@ public class ExitButton : MonoBehaviour
 
     public void OnButtonDown(Hand hand)
     {
-        UnityEditor.EditorApplication.isPlaying = false;
         Application.Quit();
     }
 }
