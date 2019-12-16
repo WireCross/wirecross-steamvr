@@ -95,12 +95,11 @@ public class VignetteEffect : Emitter
         List<Color> colors = new List<Color>();
         List<Mesh> meshes = new List<Mesh>();
 
-        foreach (int idx in selected)
-        {
-            colors.Add(associatedColors[currentIdx]);
-        }
+        colors.Add(associatedColors[0]);
+        colors.Add(associatedColors[1]);
+        colors.Add(associatedColors[2]);
 
-        for(int i=0; i < 3; i++)
+        for (int i=0; i < 3; i++)
         {
             meshes.Add(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Cylinder));
         }

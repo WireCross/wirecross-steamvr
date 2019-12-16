@@ -75,6 +75,7 @@ public class ButtonSequence : PuzzleInput
             Material mat = new Material(buttons[i].GetComponent<Renderer>().material);
             mat.SetColor("_MKGlowColor", colors[i]);
             mat.SetColor("_Tint", colors[i]);
+            mat.SetColor("_Color", colors[i]);
 
             obj.GetComponent<Renderer>().material = mat;
         }
