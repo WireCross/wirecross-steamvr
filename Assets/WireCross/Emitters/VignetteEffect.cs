@@ -4,7 +4,7 @@ using System;
 using UnityEngine.Rendering.PostProcessing;
 using UnityEngine;
 
-public class VignetteEffect : MonoBehaviour
+public class VignetteEffect : Emitter
 {
     private System.Random random = new System.Random();
     private bool hasPlayedRecently = false;
@@ -46,7 +46,10 @@ public class VignetteEffect : MonoBehaviour
 
         source = gameObject.GetComponent<AudioSource>();
         volume = gameObject.GetComponent<PostProcessVolume>();
-        volume.profile.TryGetSettings(out vig);        
+        volume.profile.TryGetSettings(out vig);
+
+        NotifySetup();
+        Debug.Log("NotifySetup");
     }
 
     // Update is called once per frame
@@ -80,6 +83,29 @@ public class VignetteEffect : MonoBehaviour
             startTime = Time.time;
             hasPlayedRecently = true;
         }
+    }
+
+    public override void Next()
+    {
+        return;
+    }
+
+    public override void NotifySetup()
+    {
+        List<Color> colors = new List<Color>();
+        List<Mesh> meshes = new List<Mesh>();
+
+        foreach (int idx in selected)
+        {
+            colors.Add(associatedColors[currentIdx]);
+        }
+
+        for(int i=0; i < 3; i++)
+        {
+            meshes.Add(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Cylinder));
+        }
+
+        SetupInput.input.SetupAnswers(colors.ToArray(), meshes.ToArray(), new int[] { 0, 1, 2 });
     }
 
 }

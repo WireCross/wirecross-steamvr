@@ -5,11 +5,9 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class TrackEntry : MonoBehaviour
+public class TrackEntry : PuzzleInput
 {
     public Texture2D sprite;
-    public GameObject sourceObject;
-    public UnityEvent OnCorrectSequence;
 
     private System.Random random = new System.Random();
     private bool hasEjectedRecently = false;
@@ -26,28 +24,46 @@ public class TrackEntry : MonoBehaviour
         new Color(1, 1, 1)
     };
 
-    private List<GameObject> correct = new List<GameObject>();
+    private List<int> correct = new List<int>
+    {
+        0, 1, 2
+    };
+
+    private GameObject choices;
     private List<GameObject> lastObjects = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
     {
+        Setup();
+    }
+
+    void Setup()
+    {
         // populate possible meshes
-        if(meshes == null)
+        if (meshes == null)
         {
             meshes = new List<Mesh>();
-            meshes.Add(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Capsule));
             meshes.Add(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Cube));
             meshes.Add(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Sphere));
-            meshes.Add(GetTriangularThing());
+            meshes.Add(PrimitiveHelper.GetTriangularThing());
         }
 
-
+        GameObject sourceObject = Resources.Load("InteractableCube") as GameObject;
         List<Color> possibleColors = new List<Color>(colors);
         List<Mesh> possibleMeshes = new List<Mesh>(meshes);
+
+        choices = new GameObject();
+        choices.name = "Choices";
+
         for (int i = 0; i < 3; i++)
         {
-            GameObject prefab = Instantiate(sourceObject, new Vector3(transform.position.x - 3, transform.position.y, transform.position.z + (-1 + i)), Quaternion.identity);
+            GameObject prefab = Instantiate(sourceObject,
+                                            new Vector3(
+                                                transform.position.x - 3,
+                                                transform.position.y,
+                                                transform.position.z + (-1 + i)
+                                            ), Quaternion.identity, choices.transform);
             prefab.name = "" + i;
 
             Color selected = ExtractRandomElement(possibleColors);
@@ -60,15 +76,9 @@ public class TrackEntry : MonoBehaviour
             mat.SetFloat("_MKGlowPower", 0.5f);
             mat.SetTexture("_MKGlowTex", sprite);
 
-//            Destroy(cube.GetComponent<BoxCollider>());
-
-//            cube.AddComponent<MeshCollider>();
-
             Mesh newMesh = ExtractRandomElement(meshes);
             newMesh.RecalculateBounds();
             cube.GetComponent<MeshFilter>().sharedMesh = newMesh;
-
-            correct.Add(prefab);
         }
     }
 
@@ -77,7 +87,7 @@ public class TrackEntry : MonoBehaviour
     {
         if (lastObjects.Count == correct.Count)
         {
-            if (lastObjects.SequenceEqual(correct))
+            if (InputMatches())
             {
                 gameObject.GetComponent<Renderer>().sharedMaterial.SetColor("_Color", new Color(0f, 1f, 0f));
                 OnCorrectSequence.Invoke();
@@ -102,6 +112,18 @@ public class TrackEntry : MonoBehaviour
         gameObject.GetComponent<Renderer>().sharedMaterial.SetColor("_Color", new Color(1f, 0f, 0f));
     }
 
+    bool InputMatches()
+    {
+        for(int i=0; i < correct.Count; i++)
+        {
+            if(correct[i] != int.Parse(lastObjects[i].name))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     T ExtractRandomElement<T>(List<T> list) {
         int idx = random.Next(0, list.Count);
         T selected = list[idx];
@@ -111,12 +133,14 @@ public class TrackEntry : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        lastObjects.Add(other.transform.root.gameObject);
+        lastObjects.Add(other.transform.parent.gameObject);
+        Debug.Log("Enter: " + string.Join(",", lastObjects));
     }
 
     public void OnTriggerExit(Collider other)
     {
-        lastObjects.Remove(other.transform.root.gameObject);
+        lastObjects.Remove(other.transform.parent.gameObject);
+        Debug.Log("Exit: " + string.Join(",", lastObjects));
     }
 
     IEnumerator ResetEjectedState()
@@ -125,24 +149,29 @@ public class TrackEntry : MonoBehaviour
         hasEjectedRecently = false;
     }
 
-    Mesh GetTriangularThing()
+    public override void SetupAnswers(Color[] colors, Mesh[] meshes, int[] correctSequence)
     {
-        Mesh mesh = new Mesh();
+        Debug.Log("Setup");
+        for (int i=0; i < colors.Length; i++)
+        {
+            try
+            {
+                GameObject child = choices.transform.Find((i).ToString("0")).Find("HackForShadow").gameObject;
+                child.GetComponent<MeshFilter>().sharedMesh = meshes[i];
 
-        mesh.vertices = new Vector3[]{
-                new Vector3(-0.5f, -0.5f, 0.5f), new Vector3(0.5f, -0.5f, 0.5f),
-                new Vector3(0, -0.5f, -0.5f), new Vector3(0, 0.5f, 0),
-        };
+                Material mat = new Material(child.GetComponent<Renderer>().material);
+                mat.SetColor("_Tint", colors[i]);
+                mat.SetColor("_MKGlowColor", colors[i]);
 
-        mesh.triangles = new int[]{
-            1, 2, 3,
-            0, 1, 3,
-            0, 2, 3,
-        }; //triangles are facing in the same direction
+                child.GetComponent<Renderer>().material = mat;
+            } catch (Exception e)
+            {
+                Debug.Log(e);
+            }
+        }
 
-        mesh.RecalculateNormals();
-		mesh.RecalculateBounds();
-        return mesh;
+        correct = new List<int>(correctSequence);
+        Debug.Log("Setup: " + string.Join(", ", correct));
     }
 
 }

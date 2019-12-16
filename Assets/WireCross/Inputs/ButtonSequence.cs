@@ -5,14 +5,14 @@ using UnityEngine.Events;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public class ButtonSequence : MonoBehaviour
+public class ButtonSequence : PuzzleInput
 {
     public List<int> correct = new List<int>
     {
         0, 1, 2
     };
 
-    public UnityEvent OnCorrectSequence;
+    public List<GameObject> buttons;
 
     private List<int> current = new List<int>();
     private GameObject indicator;
@@ -62,6 +62,25 @@ public class ButtonSequence : MonoBehaviour
     {
         yield return new WaitForSeconds(3);
         indicator.GetComponent<Renderer>().sharedMaterial.SetColor("_Color", initialColor);
+    }
+
+    public override void SetupAnswers(Color[] colors, Mesh[] meshes, int[] correctSequence)
+    {
+        Debug.Log("Setup " + colors.Length);
+        for(int i=0; i < colors.Length; i++)
+        {
+            GameObject obj = buttons[i];
+            obj.GetComponent<MeshFilter>().mesh = meshes[i];
+
+            Material mat = new Material(buttons[i].GetComponent<Renderer>().material);
+            mat.SetColor("_MKGlowColor", colors[i]);
+            mat.SetColor("_Tint", colors[i]);
+
+            obj.GetComponent<Renderer>().material = mat;
+        }
+
+        correct = new List<int>(correctSequence);
+        Debug.Log("Setup: " + string.Join(", ", correct));
     }
 
 }

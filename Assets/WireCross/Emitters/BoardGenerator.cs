@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class BoardGenerator : MonoBehaviour
+public class BoardGenerator : Emitter
 {
     public Texture2D glowSprite;
     public Material baseMaterial;
@@ -40,33 +40,47 @@ public class BoardGenerator : MonoBehaviour
         CIRCLE
     }
 
+    private Font font;
+    private Material mat;
     private System.Random random = new System.Random();
-    private GameObject board;
     private List<GameObject> objects = new List<GameObject>();
-    
-    // Start is called before the first frame update
+
+    private List<Shape> selected = new List<Shape>();
+    private int idx = 0;
+
     void Start()
     {
-        Font font = Resources.Load<Font>("Font/8BITWONDER");
-        Material mat = Resources.Load<Material>("Font/FontMat");
+        Array vals = Enum.GetValues(typeof(Shape));
+        for (int i = 0; i < 3; i++)
+        {
+            selected.Add((Shape)vals.GetValue(random.Next(vals.Length)));
+        }
+
+        Init();
+    }
+
+    // Start is called before the first frame update
+    void Init()
+    {
+        font = Resources.Load<Font>("Font/8BITWONDER");
+        mat = Resources.Load<Material>("Font/FontMat");
         if (font == null)
             throw new Exception("bad font");
         if (mat == null)
             throw new Exception("bad mat");
 
-        board = gameObject.transform.GetChild(0).gameObject;
+        if (idx >= selected.Count)
+            return;
 
         KeyValuePair<string, string> chosen = CONFUSING_PAIRS.ElementAt(random.Next(0, CONFUSING_PAIRS.Count));
 
-        Array vals = Enum.GetValues(typeof(Shape));
-        Shape shape = (Shape)vals.GetValue(random.Next(vals.Length));
-
-        foreach (GameObject obj in GeneratePatternPosition(chosen.Value, shape, mat, font)) {
+        foreach (GameObject obj in GeneratePatternPosition(chosen.Value, selected[idx], mat, font)) {
             Vector3 off = obj.transform.localPosition;
 
             obj.transform.parent = gameObject.transform;
             obj.transform.localPosition = off;
             obj.transform.rotation = new Quaternion(0, 0, 0, 0);
+
             objects.Add(obj);
         }
 
@@ -98,6 +112,21 @@ public class BoardGenerator : MonoBehaviour
             }
         }
 
+        NotifySetup();
+        Debug.Log("NotifySetup");
+    }
+
+    void CleanUp()
+    {
+        for(int cidx = 0; cidx < gameObject.transform.childCount; cidx++)
+        {
+            Transform obj = gameObject.transform.GetChild(cidx);
+            if (obj.gameObject.name.Equals("Board"))
+            {
+                continue;
+            }
+            Destroy(obj.gameObject);
+        }
     }
 
     // Update is called once per frame
@@ -207,7 +236,6 @@ public class BoardGenerator : MonoBehaviour
         else if(shape == Shape.CIRCLE)
         {
             int items = 6;
-            float radius = 3;
             for(int i=0; i < items; i++)
             {
                 float x = scale * Mathf.Cos(2 * Mathf.PI * i / items);
@@ -221,4 +249,79 @@ public class BoardGenerator : MonoBehaviour
 
         return obj.ToArray();
     }
+
+
+    public override void Next()
+    {
+        CleanUp();
+        Init();
+        idx++;
+
+        NotifySetup();
+    }
+
+    public override void NotifySetup()
+    {
+        Debug.Log("Selected " + string.Join(", ", selected));
+        List<Color> colors = new List<Color>
+        {
+            ColorDifficulty.GetPrimaryColor(1f),
+            ColorDifficulty.GetSecondaryColor(1f),
+            ColorDifficulty.GetTertiaryColor(1f)
+        };
+
+        List<Mesh> meshes = new List<Mesh>();
+        Mesh mesh = GetMeshFor(selected[idx]);
+        meshes.Add(mesh);
+
+        foreach(Shape shape in GetNot(selected[idx]))
+        {
+            meshes.Add(GetMeshFor(shape));
+        }
+
+        SetupInput.input.SetupAnswers(colors.ToArray(), meshes.ToArray(), new int[] { meshes.IndexOf(mesh) });
+    }
+
+    public Mesh GetMeshFor(Shape shape)
+    {
+        switch (shape)
+        {
+            case Shape.SQUARE:
+                return PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Cube);
+            case Shape.CIRCLE:
+                return PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Sphere);
+            case Shape.TRIANGLE:
+                return PrimitiveHelper.GetTriangularThing();
+        }
+        return null;
+    }
+
+    public Shape[] GetNot(Shape shape)
+    {
+        switch (shape)
+        {
+            case Shape.SQUARE:
+                return new Shape[] { Shape.CIRCLE, Shape.TRIANGLE };
+            case Shape.CIRCLE:
+                return new Shape[] { Shape.SQUARE, Shape.TRIANGLE };
+            case Shape.TRIANGLE:
+                return new Shape[] { Shape.CIRCLE, Shape.SQUARE};
+        }
+
+        return null;
+    }
+
+    public static List<T> Randomize<T>(List<T> list)
+    {
+        List<T> randomizedList = new List<T>();
+        System.Random rnd = new System.Random();
+        while (list.Count > 0)
+        {
+            int index = rnd.Next(0, list.Count);
+            randomizedList.Add(list[index]);
+            list.RemoveAt(index);
+        }
+        return randomizedList;
+    }
+
 }
