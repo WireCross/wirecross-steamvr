@@ -23,6 +23,7 @@ public class PlayButton : MonoBehaviour
 
     public void OnButtonDown(Hand hand)
     {
-        SceneManager.LoadScene("Debug Room");
+        //SceneManager.LoadScene("Debug Room");
+        SceneManager.LoadScene("Game Room");
     }
 }
