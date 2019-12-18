@@ -73,6 +73,12 @@ public static class ColorDifficulty
         return difficulty;
     }
 
+    public static void ResetToStart()
+    {
+        difficulty = 1f;
+        hasInitialized = false;
+    }
+
     public static void IncrementDiffAndReset()
     {
         difficulty -= 0.1f;

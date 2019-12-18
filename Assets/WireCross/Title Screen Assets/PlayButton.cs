@@ -25,6 +25,9 @@ public class PlayButton : MonoBehaviour
     {
         // load our game room scene or debug room
         //SceneManager.LoadScene("Debug Room");
+        GameStats.RoundsCompleted = 0;
+        ColorDifficulty.ResetToStart();
+
         SceneManager.LoadScene("Game Room");
     }
 }
