@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * Fufill procedural generation of puzzles
+ */
 public class SetupPuzzle : MonoBehaviour
 {
     public static GameObject puzzle;
@@ -15,8 +18,10 @@ public class SetupPuzzle : MonoBehaviour
         if (possible.Length > 0)
         {
             Debug.Log("SetupPuzzle");
+            // generate a random puzzle here
             puzzle = Instantiate(possible[random.Next(0, possible.Length)], gameObject.transform.position, new Quaternion(0,0,0,0), gameObject.transform);
             Debug.Log("Instantiate");
+            // try to find our emitter to make sure we have one (just for debugging)
             Emitter emitter = FindEmitter(puzzle);
             if (emitter == null)
                 Debug.Log("no emitter?");
@@ -25,6 +30,8 @@ public class SetupPuzzle : MonoBehaviour
 
     Emitter FindEmitter(GameObject obj)
     {
+        // try to find an emitter; GetComponent doesn't work with inheritance, so
+        // we need to check _each_ type of emitter
         Emitter attempt1 = obj.GetComponent<BoardGenerator>();
         Emitter attempt2 = obj.GetComponent<VignetteEffect>();
         if (attempt1 != null)

@@ -15,6 +15,7 @@ public class Button : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // try to find our ButtonSequence to notify when we're pressed
         seq = FindSequenceParent();
         if (seq == null)
             throw new System.Exception("No button sequence found");
@@ -29,6 +30,8 @@ public class Button : MonoBehaviour
 
     public void ButtonDown()
     {
+        // prevent multiple presses of the button at once
+        // (mainly for 2D, where ButtonDown gets called constantly)
         if (!down)
         {
             down = true;
@@ -43,6 +46,7 @@ public class Button : MonoBehaviour
 
     public void ButtonPressed()
     {
+        // notify ButtonSequence that we were pressed
         seq.ButtonPressed(id);
     }
 
@@ -52,6 +56,7 @@ public class Button : MonoBehaviour
         ButtonSequence seq = null;
         int depth = 15;
 
+        // keep going up to find the parent ButtonSequence
         while (depth > 0 && obj != null)
         {
             if ((seq = obj.GetComponent<ButtonSequence>()) != null)
