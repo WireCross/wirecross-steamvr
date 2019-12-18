@@ -263,7 +263,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   possible:
   - {fileID: 7185028610763915429, guid: 7428ef530ec9d2e40960e517abc61dfc, type: 3}
-  - {fileID: 3286801709551340652, guid: a10150e71c8194e46a2f16dc8d52f246, type: 3}
   Trigger:
     m_PersistentCalls:
       m_Calls:
@@ -1325,7 +1324,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 1
-  m_Camera: {fileID: 850709662}
+  m_Camera: {fileID: 850709666}
   m_PlaneDistance: 1
   m_PixelPerfect: 0
   m_ReceivesEvents: 1

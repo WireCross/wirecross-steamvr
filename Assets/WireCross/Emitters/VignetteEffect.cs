@@ -104,7 +104,7 @@ public class VignetteEffect : Emitter
     {
         List<Color> colors = new List<Color>();
         List<Mesh> meshes = new List<Mesh>();
-
+        
         // add our colors to pass back
         foreach (int idx in selected)
         {
@@ -113,7 +113,11 @@ public class VignetteEffect : Emitter
 
         // use cylinders since sounds don't have shapes really 
         // (we could potentially implement shapes but we'd have to use a different impl of vignette)
-        for(int i=0; i < 3; i++)
+        colors.Add(associatedColors[0]);
+        colors.Add(associatedColors[1]);
+        colors.Add(associatedColors[2]);
+
+        for (int i=0; i < 3; i++)
         {
             meshes.Add(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Cylinder));
         }
