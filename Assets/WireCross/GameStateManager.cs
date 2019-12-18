@@ -44,7 +44,10 @@ public class GameStateManager : MonoBehaviour
 
         if (timeLeft <= 0)
         {
-            PlayerPrefs.SetInt("HighScore", GameStats.RoundsCompleted);
+            if (PlayerPrefs.GetInt("HighScore", 0) < GameStats.RoundsCompleted)
+            {
+                PlayerPrefs.SetInt("HighScore", GameStats.RoundsCompleted);
+            }
             SceneManager.LoadScene("Title");
         }
     }
