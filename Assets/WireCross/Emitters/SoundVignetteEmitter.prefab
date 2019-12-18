@@ -92,9 +92,9 @@ BoxCollider:
   m_GameObject: {fileID: 1022396944208412808}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 15, y: 15, z: 15}
+  m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1210136993636270214
 MonoBehaviour:
@@ -110,7 +110,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sharedProfile: {fileID: 11400000, guid: 348985c89a0ab3345904ab20a771f786, type: 2}
   isGlobal: 0
-  blendDistance: 1
+  blendDistance: 4
   weight: 1
   priority: 0
 --- !u!82 &1793464579192553005

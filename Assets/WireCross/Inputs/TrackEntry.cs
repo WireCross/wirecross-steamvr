@@ -175,23 +175,22 @@ public class TrackEntry : PuzzleInput
         Debug.Log("Setup");
         for (int i=0; i < colors.Length; i++)
         {
-            try
-            {
-                // try to find our real cube (which is named HackForShadow since glowing stuff don't produce shadows)
-                GameObject child = choices.transform.Find((i).ToString("0")).Find("HackForShadow").gameObject;
-                child.GetComponent<MeshFilter>().sharedMesh = meshes[i];
+            // try to find our real cube (which is named HackForShadow since glowing stuff don't produce shadows)
+            GameObject child = choices.transform.Find((i).ToString("0")).Find("HackForShadow").gameObject;
+            child.GetComponent<MeshFilter>().sharedMesh = meshes[i];
 
-                // set up our tint and glow color
-                Material mat = new Material(child.GetComponent<Renderer>().material);
-                mat.SetColor("_Tint", colors[i]);
-                mat.SetColor("_MKGlowColor", colors[i]);
+            // set up our tint and glow color
+            Material mat = new Material(child.GetComponent<Renderer>().material);
+            mat.SetColor("_Tint", colors[i]);
+            mat.SetColor("_MKGlowColor", colors[i]);
+            mat.SetColor("_Color", colors[i]);
 
-                child.GetComponent<Renderer>().material = mat;
-                child.GetComponent<Light>().color = colors[i];
-            } catch (Exception e)
-            {
-                Debug.Log(e);
-            }
+            Debug.Log(i + ": happening");
+
+            child.GetComponent<Renderer>().material = mat;
+            choices.transform.Find((i).ToString("0")).GetComponent<Light>().color = colors[i];
+
+            Debug.Log(i + ": happened ");
         }
 
         correct = new List<int>(correctSequence);
