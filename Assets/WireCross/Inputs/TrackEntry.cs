@@ -89,6 +89,7 @@ public class TrackEntry : PuzzleInput
             // now emit a light source
             Light light = prefab.AddComponent<Light>();
             light.color = selected;
+            light.renderMode = LightRenderMode.ForcePixel;
         }
     }
 
@@ -186,6 +187,7 @@ public class TrackEntry : PuzzleInput
                 mat.SetColor("_MKGlowColor", colors[i]);
 
                 child.GetComponent<Renderer>().material = mat;
+                child.GetComponent<Light>().color = colors[i];
             } catch (Exception e)
             {
                 Debug.Log(e);
