@@ -22,6 +22,7 @@ public class ExitButton : MonoBehaviour
 
     public void OnButtonDown(Hand hand)
     {
+        // quit application; doens't work in the editor though
         Application.Quit();
     }
 }

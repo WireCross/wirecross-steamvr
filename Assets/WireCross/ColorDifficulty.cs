@@ -3,12 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * Fufill gameplay difficulty through player progression
+ */
 public static class ColorDifficulty 
 {
     private static System.Random random = new System.Random();
     private static Color primary;
     private static bool hasInitialized = false;
 
+    // get a random color, red, blue, or green, as our primary color
     public static Color Primary {
         get
         {
